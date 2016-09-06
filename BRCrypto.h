@@ -87,6 +87,8 @@ void BRPBKDF2(void *dk, size_t dkLen, void (*hash)(void *, const void *, size_t)
 // scrypt key derivation: http://www.tarsnap.com/scrypt.html
 void BRScrypt(void *dk, size_t dkLen, const void *pw, size_t pwLen, const void *salt, size_t saltLen,
               unsigned n, unsigned r, unsigned p);
+			  
+#include "hashgroestl.h"
 
 #ifdef __cplusplus
 }

@@ -316,7 +316,7 @@ BRTransaction *BRTransactionParse(const uint8_t *buf, size_t bufLen)
         BRTransactionFree(tx);
         tx = NULL;
     }
-    else if (isSigned) BRSHA256_2(&tx->txHash, buf, off);
+    else if (isSigned) BRSHA256(&tx->txHash, buf, off); //For Groestlcoin
     
     return tx;
 }
@@ -454,7 +454,7 @@ int BRTransactionSign(BRTransaction *tx, BRKey keys[], size_t keysCount)
         size_t sigLen, pkLen, scriptLen;
         UInt256 md = UINT256_ZERO;
         
-        BRSHA256_2(&md, data, dataLen);
+        BRSHA256(&md, data, dataLen); //For GRS
         sigLen = BRKeySign(&keys[j], sig, sizeof(sig) - 1, md);
         sig[sigLen++] = SIGHASH_ALL;
         pkLen = BRKeyPubKey(&keys[j], pubKey, sizeof(pubKey));
@@ -474,7 +474,8 @@ int BRTransactionSign(BRTransaction *tx, BRKey keys[], size_t keysCount)
         uint8_t data[_BRTransactionData(tx, NULL, 0, SIZE_MAX, 0)];
         size_t len = _BRTransactionData(tx, data, sizeof(data), SIZE_MAX, 0);
         
-        BRSHA256_2(&tx->txHash, data, len);
+        BRSHA256(&tx->txHash, data, len);  //For GRS
+		
         return 1;
     }
     else return 0;

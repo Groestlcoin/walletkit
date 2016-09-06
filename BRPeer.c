@@ -442,8 +442,10 @@ static int _BRPeerAcceptHeadersMessage(BRPeer *peer, const uint8_t *msg, size_t 
             time_t now = time(NULL);
             UInt256 locators[2];
             
-            BRSHA256_2(&locators[0], &msg[off + 81*(count - 1)], 80);
-            BRSHA256_2(&locators[1], &msg[off], 80);
+            //BRSHA256_2(&locators[0], &msg[off + 81*(count - 1)], 80);
+            //BRSHA256_2(&locators[1], &msg[off], 80);
+			HashGroestl(&locators[0], &msg[off + 81*(count - 1)], 80);
+			HashGroestl(&locators[1], &msg[off], 80);
 
             if (timestamp > 0 && timestamp + 7*24*60*60 + BLOCK_MAX_TIME_DRIFT >= ctx->earliestKeyTime) {
                 // request blocks for the remainder of the chain
@@ -453,7 +455,8 @@ static int _BRPeerAcceptHeadersMessage(BRPeer *peer, const uint8_t *msg, size_t 
                     timestamp = (++last < count) ? UInt32GetLE(&msg[off + 81*last + 68]) : 0;
                 }
                 
-                BRSHA256_2(&locators[0], &msg[off + 81*(last - 1)], 80);
+                //BRSHA256_2(&locators[0], &msg[off + 81*(last - 1)], 80);
+				HashGroestl(&locators[0], &msg[off + 81*(last - 1)], 80);
                 BRPeerSendGetblocks(peer, locators, 2, UINT256_ZERO);
             }
             else BRPeerSendGetheaders(peer, locators, 2, UINT256_ZERO);
@@ -939,7 +942,8 @@ static void *_peerThreadRoutine(void *arg)
                         peer_log(peer, "%s", strerror(error));
                     }
                     else if (len == msgLen) {
-                        BRSHA256_2(&hash, payload, msgLen);
+                        //BRSHA256_2(&hash, payload, msgLen);
+						HashGroestl(&hash, payload, msgLen);
                         
                         if (UInt32GetLE(&hash) != checksum) { // verify checksum
                             peer_log(peer, "error reading %s, invalid checksum %x, expected %x, payload length:%"PRIu32
