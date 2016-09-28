@@ -154,7 +154,7 @@ size_t BRBase58CheckEncode(char *str, size_t strLen, const uint8_t *data, size_t
     if (data || dataLen == 0) {
         memcpy(buf, data, dataLen);
         //BRSHA256_2(&buf[dataLen], data, dataLen);
-		HashGroestl(buf, data, dataLen);
+		HashGroestl(&buf[dataLen], data, dataLen);
         len = BRBase58Encode(str, strLen, buf, dataLen + 4);
     }
     
