@@ -14,7 +14,7 @@ void HashGroestl(void * buf, const void * pbegin, int len)
 	char hash2[64];
 	
     sph_groestl512_init(&ctx_gr[0]);
-    sph_groestl512 (&ctx_gr[0], (len > 0 ? pblank : (unsigned char*)pbegin), len);
+    sph_groestl512 (&ctx_gr[0], (len <= 0 ? pblank : (unsigned char*)pbegin), len);
     sph_groestl512_close(&ctx_gr[0], hash);
 	
 	sph_groestl512_init(&ctx_gr[1]);
