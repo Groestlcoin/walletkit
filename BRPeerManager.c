@@ -62,8 +62,7 @@ static const struct { uint32_t height; const char *hash; uint32_t timestamp; uin
 };
 
 static const char *dns_seeds[] = {
-    "testnet-seed.breadwallet.com.", "testnet-seed.bitcoin.petertodd.org.", "testnet-seed.bluematt.me.",
-    "testnet-seed.bitcoin.schildbach.de."
+    "testnet1.groestlcoin.org.", "testnet2.groestlcoin.org." 
 };
 
 #else // main net
@@ -71,21 +70,19 @@ static const char *dns_seeds[] = {
 // blockchain checkpoints - these are also used as starting points for partial chain downloads, so they need to be at
 // difficulty transition boundaries in order to verify the block difficulty at the immediately following transition
 static const struct { uint32_t height; const char *hash; uint32_t timestamp; uint32_t target; } checkpoint_array[] = {
-        {28888, "00000000000228ce19f55cf0c45e04c7aa5a6a873ed23902b3654c3c49884502", 1397228431, 0x1c00f051},
-        {58888, "0000000000dd85f4d5471febeb174a3f3f1598ab0af6616e9f266b56272274ef", 1398848010, 0x1C012169},
-        {    111111, "00000000013de206275ee83f93bee57622335e422acbf126a37020484c6e113c", 1401300150, 0x1c027410},
-        {669286, "000000001727e1d13ca7272dee43996efdfc6b3b57a6d2b0c48257ef52f40bcb", 1436539093, 0x1c173597}
+    {  28888, "00000000000228ce19f55cf0c45e04c7aa5a6a873ed23902b3654c3c49884502", 1397228431, 0x1c00f051},
+    {  58888, "0000000000dd85f4d5471febeb174a3f3f1598ab0af6616e9f266b56272274ef", 1398848010, 0x1C012169},
+    { 111111, "00000000013de206275ee83f93bee57622335e422acbf126a37020484c6e113c", 1401300150, 0x1c027410},
+    { 669286, "000000001727e1d13ca7272dee43996efdfc6b3b57a6d2b0c48257ef52f40bcb", 1436539093, 0x1c173597}
 
 };
 
 static const char *dns_seeds[] = {
-        "groestlcoin.net",
         "groestlcoin.org",
         "electrum1.groestlcoin.org",
         "electrum2.groestlcoin.org",
         "jswallet.groestlcoin.org",
-        "193.136.98.184",
-        "88.198.69.99"
+        "groestlsight.groestlcoin.net"
 };
 
 #endif
