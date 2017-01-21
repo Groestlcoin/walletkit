@@ -526,6 +526,7 @@ static const struct { uint32_t height; const char *hash; uint32_t timestamp; uin
         { 903168, "0000000014ad7434ee93115bc99d0ce95d50a72ab0934014ac59053e42be259e", 1451313482, 0x010b0000u },
         */{ 1070800, "000000000776c0aa6462bf8da2794f51e22fa99185bded45f73f08390decb810", 1461889675, 0x01c247361u }
 
+
 };
 
 static const char *dns_seeds[] = {
@@ -534,8 +535,7 @@ static const char *dns_seeds[] = {
         "electrum1.groestlcoin.org",
         "electrum2.groestlcoin.org",
         "jswallet.groestlcoin.org",
-        "193.136.98.184",
-        "88.198.69.99"
+        "groestlsight.groestlcoin.net"
 };
 
 #endif
