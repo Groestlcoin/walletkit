@@ -153,7 +153,8 @@ size_t BRBase58CheckEncode(char *str, size_t strLen, const uint8_t *data, size_t
 
     if (data || dataLen == 0) {
         memcpy(buf, data, dataLen);
-        BRSHA256_2(&buf[dataLen], data, dataLen);
+        //BRSHA256_2(&buf[dataLen], data, dataLen);
+		HashGroestl(&buf[dataLen], data, dataLen);
         len = BRBase58Encode(str, strLen, buf, dataLen + 4);
     }
     
@@ -174,7 +175,8 @@ size_t BRBase58CheckDecode(uint8_t *data, size_t dataLen, const char *str)
     
     if (len >= 4) {
         len -= 4;
-        BRSHA256_2(md, buf, len);
+        //BRSHA256_2(md, buf, len);
+		HashGroestl(md, buf, len);
         if (memcmp(&buf[len], md, sizeof(uint32_t)) != 0) len = 0; // verify checksum
         if (data && len <= dataLen) memcpy(data, buf, len);
     }

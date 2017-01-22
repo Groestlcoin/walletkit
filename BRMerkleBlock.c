@@ -25,13 +25,15 @@
 #include "BRMerkleBlock.h"
 #include "BRCrypto.h"
 #include "BRAddress.h"
+#include "BRPeerManager.h"
+#include "BRSet.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <string.h>
 #include <assert.h>
 
-#define MAX_PROOF_OF_WORK 0x1d00ffff    // highest value for difficulty target (higher values are less difficult)
+#define MAX_PROOF_OF_WORK 0x1e0fffff    // highest value for difficulty target (higher values are less difficult)
 #define TARGET_TIMESPAN   (14*24*60*60) // the targeted timespan between difficulty target adjustments
 
 inline static int _ceil_log2(int x)
@@ -122,7 +124,8 @@ BRMerkleBlock *BRMerkleBlockParse(const uint8_t *buf, size_t bufLen)
             if (block->flags) memcpy(block->flags, &buf[off], len);
         }
         
-        BRSHA256_2(&block->blockHash, buf, 80);
+        //BRSHA256_2(&block->blockHash, buf, 80);
+        HashGroestl(&block->blockHash, buf, 80);
     }
     
     return block;
@@ -311,7 +314,7 @@ int BRMerkleBlockContainsTxHash(const BRMerkleBlock *block, UInt256 txHash)
 // targeted time between transitions (14*24*60*60 seconds). If the new difficulty is more than 4x or less than 1/4 of
 // the previous difficulty, the change is limited to either 4x or 1/4. There is also a minimum difficulty value
 // intuitively named MAX_PROOF_OF_WORK... since larger values are less difficult.
-int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBlock *previous, uint32_t transitionTime)
+int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBlock *previous, uint32_t transitionTime, int dgwDiff)
 {
     int r = 1;
     
@@ -325,7 +328,13 @@ int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBloc
     // TODO: implement testnet difficulty rule check
     return r; // don't worry about difficulty on testnet for now
 #endif
-    
+
+    int result = dgwDiff;
+
+
+    int32_t diff = block->target - result;
+    return (abs(diff) < 2);
+  /*
     if (r && (block->height % BLOCK_DIFFICULTY_INTERVAL) == 0) {
         // target is in "compact" format, where the most significant byte is the size of resulting value in bytes, next
         // bit is the sign, and the remaining 23bits is the value after having been right shifted by (size - 3)*8 bits
@@ -351,7 +360,7 @@ int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBloc
         if (block->target != ((uint32_t)target | size << 24)) r = 0;
     }
     else if (r && block->target != previous->target) r = 0;
-    
+    */
     return r;
 }
 

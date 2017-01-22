@@ -29,6 +29,7 @@
 #include <stddef.h>
 #include <inttypes.h>
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -85,7 +86,7 @@ int BRMerkleBlockContainsTxHash(const BRMerkleBlock *block, UInt256 txHash);
 // verifies the block difficulty target is correct for the block's position in the chain
 // transitionTime is the timestamp of the block at the previous difficulty transition
 // transitionTime may be 0 if block->height is not a multiple of BLOCK_DIFFICULTY_INTERVAL
-int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBlock *previous, uint32_t transitionTime);
+int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBlock *previous, uint32_t transitionTime, int darkGravityWaveDiff);
 
 // returns a hash value for block suitable for use in a hashtable
 inline static size_t BRMerkleBlockHash(const void *block)
@@ -102,6 +103,11 @@ inline static int BRMerkleBlockEq(const void *block, const void *otherBlock)
 
 // frees memory allocated for block
 void BRMerkleBlockFree(BRMerkleBlock *block);
+
+#define DGW_PAST_BLOCKS_MIN 24
+#define DGW_PAST_BLOCKS_MAX 24
+
+
 
 #ifdef __cplusplus
 }
