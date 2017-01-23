@@ -2554,7 +2554,7 @@ UInt256 multiplyThis32 (UInt256 a,uint32_t b)
     return a;
 }
 
-#define MAX_PROOF_OF_WORK 0x1d00ffff
+#define MAX_PROOF_OF_WORK 0x1e0fffff
 int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRPeerManager * manager, int * enough) {
     /* current difficulty formula, darkcoin - based on DarkGravity v3, original work done by evan duffield, modified for iOS */
     BRMerkleBlock *previousBlock = _previousBlock;//previousBlocks[uint256_obj(self.prevBlock)];
