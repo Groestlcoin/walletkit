@@ -2518,7 +2518,9 @@ UInt256 shiftRight(UInt256 a, uint8_t bits) {
     }
     return r;
 }
-#define uint256_supeq(a, b) (a.u64[0] > b.u64[0] || (a.u64[0] == b.u64[0]) && (a.u64[1] > b.u64[1] || (a.u64[1] == b.u64[1]) && (a.u64[2] > b.u64[2] || (a.u64[2] == b.u64[2]) && (a.u64[3] >= b.u64[3]))))
+//#define uint256_supeq(a, b) (a.u64[0] > b.u64[0] || (a.u64[0] == b.u64[0]) && (a.u64[1] > b.u64[1] || (a.u64[1] == b.u64[1]) && (a.u64[2] > b.u64[2] || (a.u64[2] == b.u64[2]) && (a.u64[3] >= b.u64[3]))))
+#define uint256_supeq(a, b) (a.u64[3] > b.u64[3] || ((a.u64[3] == b.u64[3]) && (a.u64[2] > b.u64[2] || (a.u64[2] == b.u64[2]) && (a.u64[1] > b.u64[1] || (a.u64[1] == b.u64[1]) && (a.u64[0] >= b.u64[0])))))
+
 UInt256 divide (UInt256 a,UInt256 b)
 {
     UInt256 div = b;     // make a copy, so we can shift.
@@ -2559,7 +2561,7 @@ int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock 
     /* current difficulty formula, darkcoin - based on DarkGravity v3, original work done by evan duffield, modified for iOS */
     BRMerkleBlock *previousBlock = _previousBlock;//previousBlocks[uint256_obj(self.prevBlock)];
 
-    uint32_t nActualTimespan = 0;
+    int64_t nActualTimespan = 0;
     int64_t lastBlockTime = 0;
     uint32_t blockCount = 0;
     UInt256 sumTargets = UINT256_ZERO;
