@@ -68,6 +68,10 @@ void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
                                int (*networkIsReachable)(void *info),
                                void (*threadCleanup)(void *info));
 
+// specifies a single fixed peer to use when connecting to the bitcoin network
+// set address to UINT128_ZERO to revert to default behavior
+void BRPeerManagerSetFixedPeer(BRPeerManager *manager, UInt128 address, uint16_t port);
+
 // true if currently connected to at least one peer
 int BRPeerManagerIsConnected(BRPeerManager *manager);
 
@@ -81,11 +85,14 @@ void BRPeerManagerDisconnect(BRPeerManager *manager);
 // possibility that a malicious node might lie by omitting transactions that match the bloom filter)
 void BRPeerManagerRescan(BRPeerManager *manager);
 
+// the (unverified) best block height reported by connected peers
+uint32_t BRPeerManagerEstimatedBlockHeight(BRPeerManager *manager);
+
 // current proof-of-work verified best block height
 uint32_t BRPeerManagerLastBlockHeight(BRPeerManager *manager);
 
-// the (unverified) best block height reported by connected peers
-uint32_t BRPeerManagerEstimatedBlockHeight(BRPeerManager *manager);
+// current proof-of-work verified best block timestamp (time interval since unix epoch)
+uint32_t BRPeerManagerLastBlockTimestamp(BRPeerManager *manager);
 
 // current network sync progress from 0 to 1
 // startHeight is the block height of the most recent fully completed sync

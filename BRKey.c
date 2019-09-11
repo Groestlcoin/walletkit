@@ -142,12 +142,12 @@ int BRPrivKeyIsValid(const char *privKey)
         strncpy(s, privKey, sizeof(s));
         s[sizeof(s) - 2] = '?';
         BRSHA256(data, s, sizeof(s) - 1);
-        memset(s, 0, sizeof(s));
+        mem_clean(s, sizeof(s));
         r = (data[0] == 0);
     }
     else r = (strspn(privKey, "0123456789ABCDEFabcdef") == 64); // hex encoded key
     
-    memset(data, 0, sizeof(data));
+    mem_clean(data, sizeof(data));
     return r;
 }
 
@@ -203,7 +203,7 @@ int BRKeySetPrivKey(BRKey *key, const char *privKey)
         }
     }
 
-    memset(data, 0, sizeof(data));
+    mem_clean(data, sizeof(data));
     return r;
 }
 
@@ -240,7 +240,7 @@ size_t BRKeyPrivKey(const BRKey *key, char *privKey, size_t pkLen)
         UInt256Set(&data[1], key->secret);
         if (key->compressed) data[33] = 0x01;
         pkLen = BRBase58CheckEncode(privKey, pkLen, data, (key->compressed) ? 34 : 33);
-        memset(data, 0, sizeof(data));
+        mem_clean(data, sizeof(data));
     }
     else pkLen = 0;
     
@@ -256,9 +256,12 @@ size_t BRKeyPubKey(BRKey *key, void *pubKey, size_t pkLen)
 
     assert(key != NULL);
     
-    if (memcmp(key->pubKey, empty, size) == 0 && secp256k1_ec_pubkey_create(_ctx, &pk, key->secret.u8)) {
-        secp256k1_ec_pubkey_serialize(_ctx, key->pubKey, &size, &pk,
-                                      (key->compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED));
+    if (memcmp(key->pubKey, empty, size) == 0) {
+        if (secp256k1_ec_pubkey_create(_ctx, &pk, key->secret.u8)) {
+            secp256k1_ec_pubkey_serialize(_ctx, key->pubKey, &size, &pk,
+                                          (key->compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED));
+        }
+        else size = 0;
     }
 
     if (pubKey && size <= pkLen) memcpy(pubKey, key->pubKey, size);
@@ -270,10 +273,11 @@ UInt160 BRKeyHash160(BRKey *key)
 {
     UInt160 hash = UINT160_ZERO;
     size_t len;
+    secp256k1_pubkey pk;
     
     assert(key != NULL);
     len = BRKeyPubKey(key, NULL, 0);
-    if (len > 0) BRHash160(&hash, key->pubKey, len);
+    if (len > 0 && secp256k1_ec_pubkey_parse(_ctx, &pk, key->pubKey, len)) BRHash160(&hash, key->pubKey, len);
     return hash;
 }
 
@@ -301,7 +305,8 @@ size_t BRKeyAddress(BRKey *key, char *addr, size_t addrLen)
     return addrLen;
 }
 
-// signs md with key and writes signature to sig and returns the number of bytes written or sigLen needed if sig is NULL
+// signs md with key and writes signature to sig
+// returns the number of bytes written, or sigLen needed if sig is NULL
 // returns 0 on failure
 size_t BRKeySign(const BRKey *key, void *sig, size_t sigLen, UInt256 md)
 {
@@ -343,7 +348,7 @@ int BRKeyVerify(BRKey *key, UInt256 md, const void *sig, size_t sigLen)
 void BRKeyClean(BRKey *key)
 {
     assert(key != NULL);
-    memset(key, 0, sizeof(*key));
+    var_clean(key);
 }
 
 // Pieter Wuille's compact signature encoding used for bitcoin message signing
