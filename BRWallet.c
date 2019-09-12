@@ -494,15 +494,6 @@ BRAddress BRWalletReceiveAddress(BRWallet *wallet)
     return addr;
 }
 
-// returns the first unused internal address
-BRAddress BRWalletChangeAddress(BRWallet *wallet)
-{
-    BRAddress addr = BR_ADDRESS_NONE;
-    
-    BRWalletUnusedAddrs(wallet, &addr, 1, 1);
-    return addr;
-}
-
 // writes all addresses previously genereated with BRWalletUnusedAddrs() to addrs
 // returns the number addresses written, or total number available if addrs is NULL
 size_t BRWalletAllAddrs(BRWallet *wallet, BRAddress addrs[], size_t addrsCount)
@@ -577,6 +568,7 @@ BRTransaction *BRWalletCreateTxForOutputs(BRWallet *wallet, const BRTxOutput out
     uint64_t feeAmount, amount = 0, balance = 0, minAmount;
     size_t i, j, cpfpSize = 0;
     BRUTXO *o;
+    BRAddress addr = BR_ADDRESS_NONE;
     
     assert(wallet != NULL);
     assert(outputs != NULL && outCount > 0);
@@ -651,7 +643,7 @@ BRTransaction *BRWalletCreateTxForOutputs(BRWallet *wallet, const BRTxOutput out
         transaction = NULL;
     }
     else if (transaction && balance - (amount + feeAmount) >= minAmount) { // add change output
-        BRAddress addr = BRWalletChangeAddress(wallet);
+        BRWalletUnusedAddrs(wallet, &addr, 1, 1);
         uint8_t script[BRAddressScriptPubKey(NULL, 0, addr.s)];
         size_t scriptLen = BRAddressScriptPubKey(script, sizeof(script), addr.s);
     
@@ -663,9 +655,10 @@ BRTransaction *BRWalletCreateTxForOutputs(BRWallet *wallet, const BRTxOutput out
 }
 
 // signs any inputs in tx that can be signed using private keys from the wallet
+// forkId is 0 for bitcoin, 0x40 for b-cash
 // seed is the master private key (wallet seed) corresponding to the master public key given when the wallet was created
 // returns true if all inputs were signed, or false if there was an error or not all inputs were able to be signed
-int BRWalletSignTransaction(BRWallet *wallet, BRTransaction *tx, const void *seed, size_t seedLen)
+int BRWalletSignTransaction(BRWallet *wallet, BRTransaction *tx, int forkId, const void *seed, size_t seedLen)
 {
     uint32_t j, internalIdx[tx->inCount], externalIdx[tx->inCount];
     size_t i, internalCount = 0, externalCount = 0;
@@ -694,7 +687,7 @@ int BRWalletSignTransaction(BRWallet *wallet, BRTransaction *tx, const void *see
         BRBIP32PrivKeyList(&keys[internalCount], externalCount, seed, seedLen, SEQUENCE_EXTERNAL_CHAIN, externalIdx);
         // TODO: XXX wipe seed callback
         seed = NULL;
-        if (tx) r = BRTransactionSign(tx, keys, internalCount + externalCount);
+        if (tx) r = BRTransactionSign(tx, 0, keys, internalCount + externalCount);
         for (i = 0; i < internalCount + externalCount; i++) BRKeyClean(&keys[i]);
     }
     else r = -1; // user canceled authentication

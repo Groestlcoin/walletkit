@@ -86,9 +86,6 @@ size_t BRWalletUnusedAddrs(BRWallet *wallet, BRAddress addrs[], uint32_t gapLimi
 // returns the first unused external address
 BRAddress BRWalletReceiveAddress(BRWallet *wallet);
 
-// returns the first unused internal address
-BRAddress BRWalletChangeAddress(BRWallet *wallet);
-
 // writes all addresses previously genereated with BRWalletUnusedAddrs() to addrs
 // returns the number addresses written, or total number available if addrs is NULL
 size_t BRWalletAllAddrs(BRWallet *wallet, BRAddress addrs[], size_t addrsCount);
@@ -133,9 +130,10 @@ BRTransaction *BRWalletCreateTransaction(BRWallet *wallet, uint64_t amount, cons
 BRTransaction *BRWalletCreateTxForOutputs(BRWallet *wallet, const BRTxOutput outputs[], size_t outCount);
 
 // signs any inputs in tx that can be signed using private keys from the wallet
+// forkId is 0 for bitcoin, 0x40 for b-cash
 // seed is the master private key (wallet seed) corresponding to the master public key given when the wallet was created
 // returns true if all inputs were signed, or false if there was an error or not all inputs were able to be signed
-int BRWalletSignTransaction(BRWallet *wallet, BRTransaction *tx, const void *seed, size_t seedLen);
+int BRWalletSignTransaction(BRWallet *wallet, BRTransaction *tx, int forkId, const void *seed, size_t seedLen);
 
 // true if the given transaction is associated with the wallet (even if it hasn't been registered)
 int BRWalletContainsTransaction(BRWallet *wallet, const BRTransaction *tx);
