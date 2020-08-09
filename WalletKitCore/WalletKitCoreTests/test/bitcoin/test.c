@@ -2428,7 +2428,7 @@ int BRWalletTests()
     if (BRWalletTransactions(w, NULL, 0) != 0)
         r = 0, fprintf(stderr, "***FAILED*** %s: BRWalletTransactions() test 1\n", __func__);
 
-    BRTransactionSign(tx, &k, 1);
+    BRTransactionSign(tx, 0, &k, 1);
     BRWalletRegisterTransaction(w, tx);
     if (BRWalletBalance(w) != SATOSHIS)
         r = 0, fprintf(stderr, "***FAILED*** %s: BRWalletRegisterTransaction() test 2\n", __func__);
@@ -2445,7 +2445,7 @@ int BRWalletTests()
     BRTransactionAddOutput(tx, SATOSHIS, outScript, outScriptLen);
     tx->lockTime = 1000;
 
-    BRTransactionSign(tx, &k, 1);
+    BRTransactionSign(tx, 0, &k, 1);
 
     if (! BRWalletTransactionIsPending(w, tx))
         r = 0, fprintf(stderr, "***FAILED*** %s: BRWalletTransactionIsPending() test\n", __func__);
@@ -2463,7 +2463,7 @@ int BRWalletTests()
     BRTransactionAddInput(tx, inHash, 0, 1, inScript, inScriptLen, NULL, 0, NULL, 0, TXIN_SEQUENCE);
     BRTransactionAddOutput(tx, SATOSHIS, outScript, outScriptLen);
 
-    BRTransactionSign(tx, &k, 1);
+    BRTransactionSign(tx, 0, &k, 1);
     tx->timestamp = 1;
     w = BRWalletNew(BRMainNetParams->addrParams, &tx, 1, mpk);
     if (BRWalletBalance(w) != SATOSHIS)

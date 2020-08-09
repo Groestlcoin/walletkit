@@ -640,7 +640,7 @@ int BRTransactionIsSigned(const BRTransaction *tx)
 // adds signatures to any inputs with NULL signatures that can be signed with any keys
 // forkId is 0 for bitcoin, 0x40 for b-cash, 0x4f for b-gold
 // returns true if tx is signed
-int BRTransactionSign(BRTransaction *tx, BRKey keys[], size_t keysCount)
+int BRTransactionSign(BRTransaction *tx, int forkId, BRKey keys[], size_t keysCount)
 {
     UInt160 pkh[keysCount];
     size_t i, j;
