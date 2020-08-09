@@ -2242,7 +2242,7 @@ UInt256 multiplyThis32 (UInt256 a,uint32_t b)
 }
 
 #define MAX_PROOF_OF_WORK 0x1e0fffff
-int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRBlockSet * blockSet, int * enough) {
+int darkGravityWaveTargetWithPreviousBlocks(const BRMerkleBlock * self, const BRMerkleBlock *_previousBlock, const BRSet * blockSet, int * enough) {
     /* current difficulty formula, darkcoin - based on DarkGravity v3, original work done by evan duffield, modified for iOS */
     BRMerkleBlock *previousBlock = _previousBlock;//previousBlocks[uint256_obj(self.prevBlock)];
 
@@ -2286,7 +2286,7 @@ int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock 
         lastBlockTime = currentBlock->timestamp;
 
         if (previousBlock == NULL) { assert(currentBlock); break; }
-        currentBlock = BRSetGet(blockSet->blocks, &currentBlock->prevBlock);//previousBlocks[uint256_obj(currentBlock.prevBlock)];
+        currentBlock = BRSetGet(blockSet, &currentBlock->prevBlock);
         if(currentBlock == NULL)
         {
             //not enough to calculate
