@@ -1,6 +1,6 @@
 include ':crypto'
 include ':cryptodemo-android'
-include ':corenative'
+include ':CoreNative'
 include ':corenative-android'
 include ':corenative-jre'
 include ':corecrypto'

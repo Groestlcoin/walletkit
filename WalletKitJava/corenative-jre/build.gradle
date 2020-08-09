@@ -68,7 +68,7 @@ model {
             sources {
                 c {
                     source {
-                        srcDir project(':corenative').cppCryptoVendorSrcDir + "/sqlite3"
+                        srcDir project(':CoreNative').cppCryptoVendorSrcDir + "/sqlite3"
                         include "sqlite3.c"
                     }
                 }
@@ -88,7 +88,7 @@ model {
             sources {
                 c {
                     source {
-                        srcDir project(':corenative').cppCryptoVendorSrcDir + "/ed25519"
+                        srcDir project(':CoreNative').cppCryptoVendorSrcDir + "/ed25519"
                         include "*.c"
                     }
                 }
@@ -99,14 +99,14 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs project(':corenative').cppCryptoMainSrcDirs
+                        srcDirs project(':CoreNative').cppCryptoMainSrcDirs
                         include "**/*.c"
                     }
                 }
             }
             binaries {
                 binaries.all {
-                    project(':corenative').cppCryptoMainIncDirs.forEach {
+                    project(':CoreNative').cppCryptoMainIncDirs.forEach {
                         cCompiler.args "-I$it"
                     }
 
@@ -142,19 +142,19 @@ model {
             sources {
                 c {
                     source {
-                        srcDirs project(':corenative').cppCryptoMainSrcDirs
-                        srcDirs project(':corenative').cppCryptoTestSrcDirs
+                        srcDirs project(':CoreNative').cppCryptoMainSrcDirs
+                        srcDirs project(':CoreNative').cppCryptoTestSrcDirs
                         include "**/*.c"
                     }
                 }
             }
             binaries {
                 binaries.all {
-                    project(':corenative').cppCryptoMainIncDirs.forEach {
+                    project(':CoreNative').cppCryptoMainIncDirs.forEach {
                         cCompiler.args "-I$it"
                     }
 
-                    project(':corenative').cppCryptoTestIncDirs.forEach {
+                    project(':CoreNative').cppCryptoTestIncDirs.forEach {
                         cCompiler.args "-I$it"
                     }
 
@@ -199,7 +199,7 @@ model {
 sourceSets {
     main {
         java {
-            srcDirs = [project(':corenative').javaMainSrcDir]
+            srcDirs = [project(':CoreNative').javaMainSrcDir]
         }
         resources {
             srcDirs = [file(projectResMainDir)]
@@ -208,7 +208,7 @@ sourceSets {
     // use the same source set as the main target but package in the cryptoWithTests library instead
     test {
         java {
-            srcDirs = [project(':corenative').javaTestSrcDir]
+            srcDirs = [project(':CoreNative').javaTestSrcDir]
         }
         resources {
             srcDirs = [file(projectResTestDir)]

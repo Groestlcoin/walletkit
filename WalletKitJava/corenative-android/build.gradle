@@ -47,18 +47,18 @@ android {
     sourceSets {
         main {
             java {
-                srcDirs = [project(':corenative').javaMainSrcDir]
+                srcDirs = [project(':CoreNative').javaMainSrcDir]
             }
 
         }
         androidTest {
             java {
-                srcDirs = [project(':corenative').javaTestSrcDir]
+                srcDirs = [project(':CoreNative').javaTestSrcDir]
             }
         }
     }
 
-    externalNativeBuild.cmake.path project(':corenative').cmakeCMakeListsFile
+    externalNativeBuild.cmake.path project(':CoreNative').cmakeCMakeListsFile
 }
 
 dependencies {
