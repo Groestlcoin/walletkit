@@ -1404,6 +1404,8 @@ static const BRCheckPoint BRTestNetCheckpoints[] = {
     { 1108800, "00000000000288d9a219419d0607fb67cc324d4b6d2945ca81eaa5e739fab81e", 1490751239, 0x1b09ecf0 }
 };
 
+int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRBlockSet * blockSet, int* enough);
+
 static int BRMainNetVerifyDifficulty(const BRMerkleBlock *block, const BRSet *blockSet)
 {
     const BRMerkleBlock *previous, *b = NULL;
@@ -1419,8 +1421,11 @@ static int BRMainNetVerifyDifficulty(const BRMerkleBlock *block, const BRSet *bl
         }
     }
 
+    int enough;
+    int dgwDiff = darkGravityWaveTargetWithPreviousBlocks(block, b, blockSet, &enough);
+
     previous = BRSetGet(blockSet, &block->prevBlock);
-    return BRMerkleBlockVerifyDifficulty(block, previous, (b) ? b->timestamp : 0);
+    return BRMerkleBlockVerifyDifficulty(block, previous, (b) ? b->timestamp : 0, dgwdiff);
 }
 
 static int BRTestNetVerifyDifficulty(const BRMerkleBlock *block, const BRSet *blockSet)

@@ -1078,13 +1078,10 @@ static void _peerRejectedTx(void *info, UInt256 txHash, uint8_t code)
     pthread_mutex_unlock(&manager->lock);
     if (manager->txStatusUpdate) manager->txStatusUpdate(manager->info);
 }
-int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRPeerManager * manager, int* enough);
 
 static int _BRPeerManagerVerifyBlock(BRPeerManager *manager, BRMerkleBlock *block, BRMerkleBlock *prev, BRPeer *peer)
 {
-    int r = 1;
-    int enough = 0;
-    
+    int r = 1;    
 
     if (! prev || ! UInt256Eq(block->prevBlock, prev->blockHash) || block->height != prev->height + 1) r = 0;
 
@@ -1113,11 +1110,7 @@ static int _BRPeerManagerVerifyBlock(BRPeerManager *manager, BRMerkleBlock *bloc
             }
         }
     }
-
-    int dgwDiff = darkGravityWaveTargetWithPreviousBlocks(block, prev, manager, &enough);
-
-
-        //
+    
     // verify block difficulty
     if (r && ! manager->params->verifyDifficulty(block, manager->blocks)) {
         peer_log(peer, "relayed block with invalid difficulty target %x, blockHash: %s", block->target,
@@ -2249,7 +2242,7 @@ UInt256 multiplyThis32 (UInt256 a,uint32_t b)
 }
 
 #define MAX_PROOF_OF_WORK 0x1e0fffff
-int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRPeerManager * manager, int * enough) {
+int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock *_previousBlock, BRBlockSet * blockSet, int * enough) {
     /* current difficulty formula, darkcoin - based on DarkGravity v3, original work done by evan duffield, modified for iOS */
     BRMerkleBlock *previousBlock = _previousBlock;//previousBlocks[uint256_obj(self.prevBlock)];
 
@@ -2293,7 +2286,7 @@ int darkGravityWaveTargetWithPreviousBlocks(BRMerkleBlock * self, BRMerkleBlock 
         lastBlockTime = currentBlock->timestamp;
 
         if (previousBlock == NULL) { assert(currentBlock); break; }
-        currentBlock = BRSetGet(manager->blocks, &currentBlock->prevBlock);//previousBlocks[uint256_obj(currentBlock.prevBlock)];
+        currentBlock = BRSetGet(blockSet->blocks, &currentBlock->prevBlock);//previousBlocks[uint256_obj(currentBlock.prevBlock)];
         if(currentBlock == NULL)
         {
             //not enough to calculate

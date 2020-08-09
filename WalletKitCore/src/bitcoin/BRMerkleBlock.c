@@ -353,32 +353,6 @@ int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBloc
 
     int32_t diff = block->target - result;
     return (abs(diff) < 2);
-  /*
-    if (r && (block->height % BLOCK_DIFFICULTY_INTERVAL) == 0) {
-        // target is in "compact" format, where the most significant byte is the size of the value in bytes, next
-        // bit is the sign, and the last 23 bits is the value after having been right shifted by (size - 3)*8 bits
-        size = previous->target >> 24, target = previous->target & 0x007fffff;
-        timespan = (int64_t)previous->timestamp - transitionTime;
-        
-        // limit difficulty transition to -75% or +400%
-        if (timespan < TARGET_TIMESPAN/4) timespan = TARGET_TIMESPAN/4;
-        if (timespan > TARGET_TIMESPAN*4) timespan = TARGET_TIMESPAN*4;
-    
-        // TARGET_TIMESPAN happens to be a multiple of 256, and since timespan is at least TARGET_TIMESPAN/4, we don't
-        // lose precision when target is multiplied by timespan and then divided by TARGET_TIMESPAN/256
-        target *= timespan;
-        target /= TARGET_TIMESPAN >> 8;
-        size--; // decrement size since we only divided by TARGET_TIMESPAN/256
-    
-        while (size < 1 || target > 0x007fffff) target >>= 8, size++; // normalize target for "compact" format
-        target |= size << 24;
-    
-        if (target > MAX_PROOF_OF_WORK) target = MAX_PROOF_OF_WORK; // limit to MAX_PROOF_OF_WORK
-        if (block->target != target) r = 0;
-    }
-    else if (r && block->target != previous->target) r = 0;
-    */
-    return r;
 }
 
 // frees memory allocated by BRMerkleBlockParse
