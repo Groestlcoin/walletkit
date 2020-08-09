@@ -95,7 +95,13 @@ target_sources (corecrypto
                 ${PROJECT_SOURCE_DIR}/src/support/BRKeyECIES.c
                 ${PROJECT_SOURCE_DIR}/src/support/BRKeyECIES.h
                 ${PROJECT_SOURCE_DIR}/src/support/BRSet.c
-                ${PROJECT_SOURCE_DIR}/src/support/BRSet.h)
+                ${PROJECT_SOURCE_DIR}/src/support/BRSet.h
+                ${PROJECT_SOURCE_DIR}/src/support/groestl.c
+                ${PROJECT_SOURCE_DIR}/src/support/hashblock.c
+                ${PROJECT_SOURCE_DIR}/src/support/hashgroestl.h
+                ${PROJECT_SOURCE_DIR}/src/support/sph_groestl.h
+                ${PROJECT_SOURCE_DIR}/src/support/sph_types.h
+                ${PROJECT_SOURCE_DIR}/src/support/uint256.h)
 
 # Support Tests
 if (CMAKE_BUILD_TYPE MATCHES Debug)
