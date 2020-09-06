@@ -36,7 +36,8 @@ cryptoHasherCreate(BRCryptoHasherType type) {
         case CRYPTO_HASHER_RMD160:
         case CRYPTO_HASHER_HASH160:
         case CRYPTO_HASHER_KECCAK256:
-        case CRYPTO_HASHER_MD5: {
+        case CRYPTO_HASHER_MD5:
+        case CRYPTO_HASHER_GROESTL_2: {
             hasher = calloc (1, sizeof(struct BRCryptoHasherRecord));
             hasher->type = type;
             hasher->ref = CRYPTO_REF_ASSIGN(cryptoHasherRelease);
@@ -105,6 +106,10 @@ cryptoHasherLength (BRCryptoHasher hasher) {
         }
         case CRYPTO_HASHER_MD5: {
             length = 16;
+            break;
+        }
+        case CRYPTO_HASHER_GROESTL_2: {
+            length = 32;
             break;
         }
         default: {
@@ -178,6 +183,10 @@ cryptoHasherHash (BRCryptoHasher hasher,
         }
         case CRYPTO_HASHER_MD5: {
             BRMD5 (dst, src, srcLen);
+            break;
+        }
+        case CRYPTO_HASHER_GROESTL_2: {
+            HashGroestl (dst, src, srcLen);
             break;
         }
         default: {

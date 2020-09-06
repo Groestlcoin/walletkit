@@ -28,7 +28,8 @@ extern "C" {
         CRYPTO_HASHER_RMD160,
         CRYPTO_HASHER_HASH160,
         CRYPTO_HASHER_KECCAK256,
-        CRYPTO_HASHER_MD5
+        CRYPTO_HASHER_MD5,
+        CRYPTO_HASHER_GROESTL_2
     } BRCryptoHasherType;
 
     typedef struct BRCryptoHasherRecord *BRCryptoHasher;

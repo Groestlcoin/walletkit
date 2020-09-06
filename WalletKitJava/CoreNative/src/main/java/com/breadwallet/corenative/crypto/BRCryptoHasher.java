@@ -28,6 +28,7 @@ public class BRCryptoHasher extends PointerType {
     private static final int CRYPTO_HASHER_HASH160      = 8;
     private static final int CRYPTO_HASHER_KECCAK256    = 9;
     private static final int CRYPTO_HASHER_MD5          = 10;
+    private static final int CRYPTO_HASHER_GROESTL_2    = 11;
 
     public static Optional<BRCryptoHasher> createSha1() {
         return create(CRYPTO_HASHER_SHA1);
@@ -71,6 +72,10 @@ public class BRCryptoHasher extends PointerType {
 
     public static Optional<BRCryptoHasher> createMd5() {
         return create(CRYPTO_HASHER_MD5);
+    }
+
+    public static Optional<BRCryptoHasher> createGroestl2() {
+        return create(CRYPTO_HASHER_GROESTL_2);
     }
 
     private static Optional<BRCryptoHasher> create(int alg) {
