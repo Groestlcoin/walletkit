@@ -35,13 +35,13 @@
 // MARK: - BTC
 
 #define NETWORK_NAME    "Bitcoin"
-DEFINE_NETWORK (btcMainnet,  "bitcoin-mainnet", NETWORK_NAME, "mainnet", true, 612691, 6)
+DEFINE_NETWORK (btcMainnet,  "bitcoin-mainnet", NETWORK_NAME, "mainnet", true, 3000000, 6)
 DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-mainnet", "18", "10m", 10 * 60 * 1000)
 DEFINE_CURRENCY ("bitcoin-mainnet",     "bitcoin-mainnet:__native__",   NETWORK_NAME,  CRYPTO_NETWORK_CURRENCY_BTC,  "native",   NULL,   true)
     DEFINE_UNIT ("bitcoin-mainnet:__native__",      "Satoshi",    "sat",      0,      "SAT")
     DEFINE_UNIT ("bitcoin-mainnet:__native__",      NETWORK_NAME, "btc",      8,      "₿")
 DEFINE_ADDRESS_SCHEMES  ("bitcoin-mainnet", CRYPTO_ADDRESS_SCHEME_BTC_SEGWIT,   CRYPTO_ADDRESS_SCHEME_BTC_LEGACY)
-DEFINE_MODES            ("bitcoin-mainnet", CRYPTO_SYNC_MODE_API_ONLY,          CRYPTO_SYNC_MODE_P2P_ONLY)
+DEFINE_MODES            ("bitcoin-mainnet", CRYPTO_SYNC_MODE_P2P_ONLY)
 
 DEFINE_NETWORK (btcTestnet,  "bitcoin-testnet", NETWORK_NAME, "testnet", false, 1660401, 6)
 DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-testnet", "18", "10m", 10 * 60 * 1000)
@@ -49,9 +49,9 @@ DEFINE_CURRENCY ("bitcoin-testnet",     "bitcoin-testnet:__native__",   NETWORK_
     DEFINE_UNIT ("bitcoin-testnet:__native__",      "Satoshi",    "sat",      0,      "SAT")
     DEFINE_UNIT ("bitcoin-testnet:__native__",      NETWORK_NAME, "btc",      8,      "₿")
 DEFINE_ADDRESS_SCHEMES  ("bitcoin-testnet", CRYPTO_ADDRESS_SCHEME_BTC_SEGWIT,   CRYPTO_ADDRESS_SCHEME_BTC_LEGACY)
-DEFINE_MODES            ("bitcoin-testnet", CRYPTO_SYNC_MODE_API_ONLY,          CRYPTO_SYNC_MODE_P2P_ONLY)
+DEFINE_MODES            ("bitcoin-testnet", CRYPTO_SYNC_MODE_P2P_ONLY)
 #undef NETWORK_NAME
-
+/*
 // MARK: - BCH
 
 #define NETWORK_NAME    "Bitcoin Cash"
@@ -139,7 +139,7 @@ DEFINE_CURRENCY ("hedera-testnet",     "hedera-testnet:__native__",   NETWORK_NA
 DEFINE_ADDRESS_SCHEMES  ("hedera-testnet", CRYPTO_ADDRESS_SCHEME_GEN_DEFAULT)
 DEFINE_MODES            ("hedera-testnet", CRYPTO_SYNC_MODE_API_ONLY)
 #undef NETWORK_NAME
-
+*/
 // MARK: XLM Mainnet
 
 #undef DEFINE_NETWORK
