@@ -22,7 +22,8 @@ public interface Hasher {
         RMD160,
         HASH160,
         KECCAK256,
-        MD5
+        MD5,
+        GROESTL_2
     }
 
     static Hasher createForAlgorithm(Algorithm algorithm) {

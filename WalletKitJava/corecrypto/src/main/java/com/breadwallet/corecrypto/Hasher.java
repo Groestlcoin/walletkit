@@ -51,6 +51,9 @@ final class Hasher implements com.breadwallet.crypto.Hasher {
     @Nullable
     private static final Hasher HASHER_MD5 = BRCryptoHasher.createMd5().transform(Hasher::create).orNull();
 
+    @Nullable 
+    private static final Hasher HASHER_GROESTL_2 = BRCryptoHasher.createGroestl2().transform(Hasher::create).orNull();
+
     /* package */
     static Hasher createForAlgorithm(Algorithm algorithm) {
         Hasher hasher = null;
@@ -88,6 +91,9 @@ final class Hasher implements com.breadwallet.crypto.Hasher {
                 break;
             case MD5:
                 hasher = HASHER_MD5;
+                break;
+            case GROESTL_2:
+                hasher = HASHER_GROESTL_2;
                 break;
         }
 
