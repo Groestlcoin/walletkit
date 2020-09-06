@@ -30,12 +30,6 @@ static const char *BRMainNetDNSSeeds[] = {
         "dnsseed2.groestlcoin.org",
         "dnsseed3.groestlcoin.org",
         "dnsseed4.groestlcoin.org",
-        "groestlcoin.net",
-        "groestlcoin.org",
-        "electrum1.groestlcoin.org",
-        "electrum2.groestlcoin.org",
-        "jswallet.groestlcoin.org",
-        "groestlsight.groestlcoin.net",
         NULL
 };
 
