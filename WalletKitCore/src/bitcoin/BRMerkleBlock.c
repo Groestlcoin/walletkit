@@ -138,7 +138,6 @@ BRMerkleBlock *BRMerkleBlockParse(const uint8_t *buf, size_t bufLen)
         }
         
         HashGroestl(&block->blockHash, buf, 80);
-        BRSHA256_2(&block->blockHash, buf, 80);
 
         if (off > bufLen) {
             BRMerkleBlockFree(block);
@@ -342,6 +341,9 @@ int BRMerkleBlockVerifyDifficulty(const BRMerkleBlock *block, const BRMerkleBloc
     
     if (! previous || !UInt256Eq(block->prevBlock, previous->blockHash) || block->height != previous->height + 1) r = 0;
     if (r && (block->height % BLOCK_DIFFICULTY_INTERVAL) == 0 && transitionTime == 0) r = 0;
+
+    if (block->height <= 99999)
+        return 1;
     
 #if BITCOIN_TESTNET
     // TODO: implement testnet difficulty rule check
