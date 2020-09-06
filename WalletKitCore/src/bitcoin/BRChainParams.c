@@ -320,7 +320,9 @@ static int BRMainNetVerifyDifficulty(const BRMerkleBlock *block, const BRSet *bl
     int dgwDiff = darkGravityWaveTargetWithPreviousBlocks(block, b, blockSet, &enough);
 
     previous = BRSetGet(blockSet, &block->prevBlock);
-    return BRMerkleBlockVerifyDifficulty(block, previous, (b) ? b->timestamp : 0, dgwDiff);
+    if (enough)
+        return BRMerkleBlockVerifyDifficulty(block, previous, (b) ? b->timestamp : 0, dgwDiff);
+    else return 1;
 }
 
 static int BRTestNetVerifyDifficulty(const BRMerkleBlock *block, const BRSet *blockSet)
