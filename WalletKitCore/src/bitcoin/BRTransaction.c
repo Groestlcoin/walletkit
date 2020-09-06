@@ -208,7 +208,7 @@ static size_t _BRTransactionWitnessData(const BRTransaction *tx, uint8_t *data, 
             UInt32SetLE(&buf[(sizeof(UInt256) + sizeof(uint32_t))*i + sizeof(UInt256)], tx->inputs[i].index);
         }
         
-        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256_2(&data[off], buf, sizeof(buf)); // inputs hash
+        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256(&data[off], buf, sizeof(buf)); // inputs hash
     }
     else if (data && off + sizeof(UInt256) <= dataLen) UInt256Set(&data[off], UINT256_ZERO); // anyone-can-pay
     
@@ -218,7 +218,7 @@ static size_t _BRTransactionWitnessData(const BRTransaction *tx, uint8_t *data, 
         uint8_t buf[sizeof(uint32_t)*tx->inCount];
         
         for (i = 0; i < tx->inCount; i++) UInt32SetLE(&buf[sizeof(uint32_t)*i], tx->inputs[i].sequence);
-        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256_2(&data[off], buf, sizeof(buf)); // sequence hash
+        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256(&data[off], buf, sizeof(buf)); // sequence hash
     }
     else if (data && off + sizeof(UInt256) <= dataLen) UInt256Set(&data[off], UINT256_ZERO);
     
@@ -240,14 +240,14 @@ static size_t _BRTransactionWitnessData(const BRTransaction *tx, uint8_t *data, 
         uint8_t _buf[0x1000], *buf = (bufLen <= 0x1000) ? _buf : malloc(bufLen);
         
         bufLen = _BRTransactionOutputData(tx, buf, bufLen, SIZE_MAX);
-        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256_2(&data[off], buf, bufLen); // SIGHASH_ALL outputs hash
+        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256(&data[off], buf, bufLen); // SIGHASH_ALL outputs hash
         if (buf != _buf) free(buf);
     }
     else if (sigHash == SIGHASH_SINGLE && index < tx->outCount) {
         uint8_t buf[_BRTransactionOutputData(tx, NULL, 0, index)];
         size_t bufLen = _BRTransactionOutputData(tx, buf, sizeof(buf), index);
         
-        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256_2(&data[off], buf, bufLen); //SIGHASH_SINGLE outputs hash
+        if (data && off + sizeof(UInt256) <= dataLen) BRSHA256(&data[off], buf, bufLen); //SIGHASH_SINGLE outputs hash
     }
     else if (data && off + sizeof(UInt256) <= dataLen) UInt256Set(&data[off], UINT256_ZERO); // SIGHASH_NONE
     
