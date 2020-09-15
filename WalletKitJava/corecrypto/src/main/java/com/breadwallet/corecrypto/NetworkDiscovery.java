@@ -19,6 +19,7 @@ import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -250,7 +251,24 @@ final class NetworkDiscovery {
 
                     Map<String, com.breadwallet.crypto.blockchaindb.models.bdb.Currency> merged = new HashMap<>();
                     for (com.breadwallet.crypto.blockchaindb.models.bdb.Currency currency : newCurrencies) {
-                        merged.put(currency.getId(), currency);
+                        if (currency.getCode().equals("btc")) {
+                            CurrencyDenomination grs = CurrencyDenomination.create("Groestlcoin", "grs", UnsignedInteger.valueOf(8), "G");
+                            CurrencyDenomination gro = CurrencyDenomination.create("Gro", "gro", UnsignedInteger.ZERO, "GRO");
+                            com.breadwallet.crypto.blockchaindb.models.bdb.Currency replacement =
+                                    com.breadwallet.crypto.blockchaindb.models.bdb.Currency.create(
+                                            currency.getId(),
+                                            "Groestlcoin",
+                                            "grs",
+                                            currency.getInitialSupply(),
+                                            currency.getTotalSupply(),
+                                            currency.getType(),
+                                            currency.getBlockchainId(),
+                                            currency.getAddressValue(),
+                                            currency.getVerified(),
+                                            Arrays.asList(grs, gro)
+                                    );
+                            merged.put(replacement.getId(), replacement);
+                        }
                     }
 
                     func.apply(merged.values());

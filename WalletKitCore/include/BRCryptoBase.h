@@ -110,7 +110,7 @@ extern uint64_t BLOCK_HEIGHT_UNBOUND_VALUE;
     // These are the 'currency codes' used for DEFINE_CURRENCY in crypto/BRCryptoConfig.h.  Any
     // time we need 'type -> string' we'll use these in cryptoNetworkCanonicalTypeGetCurrencyCode()
     //
-#    define CRYPTO_NETWORK_CURRENCY_BTC     "btc"
+#    define CRYPTO_NETWORK_CURRENCY_BTC     "grs"
 #    define CRYPTO_NETWORK_CURRENCY_BCH     "bch"
 #    define CRYPTO_NETWORK_CURRENCY_ETH     "eth"
 #    define CRYPTO_NETWORK_CURRENCY_XRP     "xrp"

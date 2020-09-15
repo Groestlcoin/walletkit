@@ -139,7 +139,7 @@ public class CoreCryptoApplication extends Application {
             Log.log(Level.FINE, String.format("Mainnet:           %s", isMainnet));
 
             List<String> currencyCodesNeeded = Arrays.asList(
-                    "btc",
+                    "grs",
                     "eth",
                     "bch",
                     "xrp",

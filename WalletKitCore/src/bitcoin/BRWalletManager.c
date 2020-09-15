@@ -79,7 +79,7 @@ static const char *
 getCurrencyName (const BRChainParams *params) {
     if (params->magicNumber == BRMainNetParams->magicNumber ||
         params->magicNumber == BRTestNetParams->magicNumber)
-        return "btc";
+        return "grs";
 
     if (params->magicNumber == BRBCashParams->magicNumber ||
         params->magicNumber == BRBCashTestNetParams->magicNumber)

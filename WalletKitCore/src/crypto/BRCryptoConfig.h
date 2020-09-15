@@ -34,20 +34,20 @@
 
 // MARK: - BTC
 
-#define NETWORK_NAME    "Bitcoin"
+#define NETWORK_NAME    "Groestlcoin"
 DEFINE_NETWORK (btcMainnet,  "bitcoin-mainnet", NETWORK_NAME, "mainnet", true, 3000000, 6)
-DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-mainnet", "18", "10m", 10 * 60 * 1000)
+DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-mainnet", "18", "10m", 1 * 60 * 1000)
 DEFINE_CURRENCY ("bitcoin-mainnet",     "bitcoin-mainnet:__native__",   NETWORK_NAME,  CRYPTO_NETWORK_CURRENCY_BTC,  "native",   NULL,   true)
-    DEFINE_UNIT ("bitcoin-mainnet:__native__",      "Satoshi",    "sat",      0,      "SAT")
-    DEFINE_UNIT ("bitcoin-mainnet:__native__",      NETWORK_NAME, "btc",      8,      "₿")
+    DEFINE_UNIT ("bitcoin-mainnet:__native__",      "Gro",    "gro",      0,      "GRO")
+    DEFINE_UNIT ("bitcoin-mainnet:__native__",      NETWORK_NAME, "grs",      8,      "G")
 DEFINE_ADDRESS_SCHEMES  ("bitcoin-mainnet", CRYPTO_ADDRESS_SCHEME_BTC_SEGWIT,   CRYPTO_ADDRESS_SCHEME_BTC_LEGACY)
 DEFINE_MODES            ("bitcoin-mainnet", CRYPTO_SYNC_MODE_P2P_ONLY)
 
 DEFINE_NETWORK (btcTestnet,  "bitcoin-testnet", NETWORK_NAME, "testnet", false, 1660401, 6)
-DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-testnet", "18", "10m", 10 * 60 * 1000)
+DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-testnet", "18", "10m", 1 * 60 * 1000)
 DEFINE_CURRENCY ("bitcoin-testnet",     "bitcoin-testnet:__native__",   NETWORK_NAME,  CRYPTO_NETWORK_CURRENCY_BTC,  "native",   NULL,   true)
-    DEFINE_UNIT ("bitcoin-testnet:__native__",      "Satoshi",    "sat",      0,      "SAT")
-    DEFINE_UNIT ("bitcoin-testnet:__native__",      NETWORK_NAME, "btc",      8,      "₿")
+    DEFINE_UNIT ("bitcoin-testnet:__native__",      "Gro",    "gro",      0,      "GRO")
+    DEFINE_UNIT ("bitcoin-testnet:__native__",      NETWORK_NAME, "grs",      8,      "G")
 DEFINE_ADDRESS_SCHEMES  ("bitcoin-testnet", CRYPTO_ADDRESS_SCHEME_BTC_SEGWIT,   CRYPTO_ADDRESS_SCHEME_BTC_LEGACY)
 DEFINE_MODES            ("bitcoin-testnet", CRYPTO_SYNC_MODE_P2P_ONLY)
 #undef NETWORK_NAME
