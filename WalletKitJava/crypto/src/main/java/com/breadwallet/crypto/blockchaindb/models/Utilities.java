@@ -22,4 +22,15 @@ public final class Utilities {
             return Optional.absent();
         }
     }
+
+    public static Optional<byte[]> getOptionalBase16Bytes(String value) {
+        if (null == value) {
+            return Optional.absent();
+        }
+        try {
+            return Optional.fromNullable(BaseEncoding.base16().decode(value.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return Optional.absent();
+        }
+    }
 }
