@@ -89,7 +89,10 @@ int BRBIP38KeyIsValid(const char *bip38Key)
     
     assert(bip38Key != NULL);
     
-    if (BRBase58CheckDecode(data, sizeof(data), bip38Key) != 39) return 0; // invalid length
+    if (BRBase58CheckDecode(data, sizeof(data), bip38Key) != 39) {
+        if(BRBase58CheckSHA256Decode(data, sizeof(data), bip38Key) != 39)
+            return 0; // invalid length
+    }
     
     uint16_t prefix = UInt16GetBE(data);
     uint8_t flag = data[2];
@@ -115,7 +118,11 @@ int BRKeySetBIP38Key(BRKey *key, const char *bip38Key, const char *passphrase, B
     assert(bip38Key != NULL);
     assert(passphrase != NULL);
     
-    if (BRBase58CheckDecode(data, sizeof(data), bip38Key) != 39) return 0; // invalid length
+    if (BRBase58CheckDecode(data, sizeof(data), bip38Key) != 39) {
+        if (BRBase58CheckSHA256Decode(data, sizeof(data), bip38Key) != 39) {
+            return 0; // invalid length
+        }
+    }
     
     uint16_t prefix = UInt16GetBE(data);
     uint8_t flag = data[2];
@@ -182,7 +189,11 @@ int BRKeySetBIP38Key(BRKey *key, const char *bip38Key, const char *passphrase, B
     var_clean(&secret);
     BRKeyLegacyAddr(key, address.s, sizeof(address), params);
     BRSHA256_2(&hash, address.s, strlen(address.s));
-    if (! address.s[0] || memcmp(&hash, addresshash, sizeof(uint32_t)) != 0) r = 0;
+    if (! address.s[0] || memcmp(&hash, addresshash, sizeof(uint32_t)) != 0) {
+        HashGroestl(&hash, address.s, strlen(address.s));
+        if (! address.s[0] || memcmp(&hash, addresshash, sizeof(uint32_t)) != 0)
+            r = 0;
+    }
     return r;
 }
 
