@@ -195,6 +195,30 @@ size_t BRBase58CheckDecode(uint8_t *data, size_t dataLen, const char *str)
     return (! data || len <= dataLen) ? len : 0;
 }
 
+// returns the number of bytes written to data, or total dataLen needed if data is NULL
+size_t BRBase58CheckSHA256Decode(uint8_t *data, size_t dataLen, const char *str)
+{
+    size_t len, bufLen = (str) ? strlen(str) : 0;
+    uint8_t md[256/8], _buf[0x1000], *buf = (bufLen <= 0x1000) ? _buf : malloc(bufLen);
+
+    assert(str != NULL);
+    assert(buf != NULL);
+    len = BRBase58Decode(buf, bufLen, str);
+
+    if (len >= 4) {
+        len -= 4;
+        BRSHA256_2(md, buf, len);
+        //HashGroestl(md, buf, len);
+        if (memcmp(&buf[len], md, sizeof(uint32_t)) != 0) len = 0; // verify checksum
+        if (data && len <= dataLen) memcpy(data, buf, len);
+    }
+    else len = 0;
+
+    mem_clean(buf, bufLen);
+    if (buf != _buf) free(buf);
+    return (! data || len <= dataLen) ? len : 0;
+}
+
 size_t BRBase58DecodeEx(uint8_t* data, size_t dataLen, const char *str, const char* alphabet)
 {
     int reverseLookup[256];
