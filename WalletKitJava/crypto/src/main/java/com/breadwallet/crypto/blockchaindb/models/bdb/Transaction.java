@@ -198,7 +198,7 @@ public class Transaction {
 
     @JsonIgnore
     public Optional<byte[]> getRaw() {
-        return Utilities.getOptionalBase64Bytes(raw);
+        return Utilities.getOptionalBase16Bytes(raw);
     }
 
     @JsonProperty("proof")
