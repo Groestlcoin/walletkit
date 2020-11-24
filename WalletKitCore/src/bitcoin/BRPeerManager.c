@@ -348,7 +348,7 @@ static void _updateFilterRerequestDone(void *info, int success)
         if ((peer->flags & PEER_FLAG_NEEDSUPDATE) == 0) {
             UInt256 locators[_BRPeerManagerBlockLocators(manager, NULL, 0)];
             size_t count = _BRPeerManagerBlockLocators(manager, locators, sizeof(locators)/sizeof(*locators));
-            
+
             BRPeerSendGetblocks(peer, locators, count, UINT256_ZERO);
         }
 
@@ -1541,7 +1541,10 @@ BRPeerManager *BRPeerManagerNew(const BRChainParams *params, BRWallet *wallet, u
         block->target = manager->params->checkpoints[i].target;
         BRSetAdd(manager->checkpoints, block);
         BRSetAdd(manager->blocks, block);
-        if (i == 0 || block->timestamp + 7*24*60*60 < manager->earliestKeyTime) manager->lastBlock = block;
+        if (i == 0 || block->timestamp + 7*24*60*60 < manager->earliestKeyTime) {
+            _peer_log("setting lastBlock with [%u] -> %s", i, u256hex(block->blockHash));
+            manager->lastBlock = block;
+        }
     }
 
     _peer_log("BPM: checkpoint found with %u last block height",
