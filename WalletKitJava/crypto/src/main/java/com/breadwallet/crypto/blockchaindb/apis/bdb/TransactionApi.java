@@ -74,7 +74,7 @@ public class TransactionApi {
             ImmutableMultimap<String, String> params = paramsBuilder.build();
 
             CompletionHandler<PagedData<Transaction>, QueryError> pagedHandler = createPagedResultsHandler(coordinator, chunkedAddresses);
-            jsonClient.sendGetForArrayWithPaging("transactions", params, Transaction.class, pagedHandler);
+            jsonClient.sendGetForArrayWithPagingEsploraUnspent("transactions", params, pagedHandler);
         }
     }
 

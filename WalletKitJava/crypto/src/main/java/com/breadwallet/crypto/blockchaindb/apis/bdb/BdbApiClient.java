@@ -21,8 +21,11 @@ import com.breadwallet.crypto.blockchaindb.errors.QueryNoDataError;
 import com.breadwallet.crypto.blockchaindb.errors.QueryResponseError;
 import com.breadwallet.crypto.blockchaindb.errors.QuerySubmissionError;
 import com.breadwallet.crypto.blockchaindb.errors.QueryUrlError;
+import com.breadwallet.crypto.blockchaindb.models.bdb.Amount;
+import com.breadwallet.crypto.blockchaindb.models.bdb.Transaction;
 import com.breadwallet.crypto.utility.CompletionHandler;
 import com.google.common.collect.Multimap;
+import com.google.common.primitives.UnsignedLong;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -160,6 +163,18 @@ public class BdbApiClient {
                 null,
                 "GET",
                 new EmbeddedPagedArrayResponseHandler<>(resource, coder, clazz),
+                handler);
+    }
+
+    void sendGetForArrayWithPagingEsploraUnspent(String resource,
+                                       Multimap<String, String> params,
+                                       CompletionHandler<PagedData<Transaction>, QueryError> handler) {
+        makeAndSendRequestExploraAddressUTXO(
+                Collections.singletonList(resource),
+                params,
+                null,
+                "GET",
+                new EsploraEmbeddedPagedArrayResponseHandler(coder, client),
                 handler);
     }
 
@@ -323,6 +338,41 @@ public class BdbApiClient {
         sendRequest(requestBuilder.build(), dataTask, parser, handler);
     }
 
+    private void makeAndSendRequestExploraAddressUTXO(List<String> pathSegments,
+                                        Multimap<String, String> params,
+                                        @Nullable Object json,
+                                        String httpMethod, EsploraEmbeddedPagedArrayResponseHandler parser,
+                                        CompletionHandler<PagedData<Transaction>, QueryError> handler) {
+        RequestBody httpBody;
+        if (json == null) {
+            httpBody = null;
+
+        } else try {
+            httpBody = RequestBody.create(coder.serializeObject(json), MEDIA_TYPE_JSON);
+
+        } catch (ObjectCoderException e) {
+            handler.handleError(new QuerySubmissionError(e.getMessage()));
+            return;
+        }
+
+        HttpUrl url = HttpUrl.parse("https://esplora.groestlcoin.org/api/address/" + params.get("address").toArray(new String[0])[0] + "/utxo");
+        if (null == url) {
+            handler.handleError(new QueryUrlError("Invalid base URL " + baseUrl));
+            return;
+        }
+
+        HttpUrl.Builder urlBuilder = url.newBuilder();
+        HttpUrl httpUrl = urlBuilder.build();
+        Log.log(Level.FINE, String.format("Request: %s: Method: %s: Data: %s", httpUrl, httpMethod, json));
+
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(httpUrl);
+        requestBuilder.header("Accept", "application/json");
+        requestBuilder.method(httpMethod, httpBody);
+
+        sendRequestEsploraAddressUTXOTx(requestBuilder.build(), dataTask, parser, handler);
+    }
+
     private <T> void sendRequest(Request request,
                                  DataTask dataTask,
                                  ResponseParser<T> parser,
@@ -341,6 +391,103 @@ public class BdbApiClient {
                             throw new QueryNoDataError();
                         } else {
                             data = parser.parseResponse(responseBody.string());
+                        }
+                    } else {
+                        throw new QueryResponseError(responseCode);
+                    }
+                } catch (QueryError e) {
+                    error = e;
+                } catch (RuntimeException e) {
+                    exception = e;
+                }
+
+                // if anything goes wrong, make sure we report as an error
+                if (exception != null) {
+                    Log.log(Level.SEVERE, "response failed with runtime exception", exception);
+                    handler.handleError(new QuerySubmissionError(exception.getMessage()));
+                } else if (error != null) {
+                    Log.log(Level.SEVERE, "response failed with error", error);
+                    handler.handleError(error);
+                } else {
+                    handler.handleData(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.log(Level.SEVERE, "send request failed", e);
+                handler.handleError(new QuerySubmissionError(e.getMessage()));
+            }
+        });
+    }
+
+    private void sendRequestEsploraAddressUTXOTx(Request request,
+                                               DataTask dataTask,
+                                                 ResponseParser<PagedData<Transaction>> parser,
+                                                 CompletionHandler<PagedData<Transaction>, QueryError> handler) {
+        dataTask.execute(client, request, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                PagedData<Transaction> data = null;
+                QueryError error = null;
+                RuntimeException exception = null;
+
+                try (ResponseBody responseBody = response.body()) {
+                    int responseCode = response.code();
+                    if (HttpStatusCodes.responseSuccess(request.method()).contains(responseCode)) {
+                        if (responseBody == null) {
+                            throw new QueryNoDataError();
+                        } else {
+                            data = parser.parseResponse(responseBody.string());
+                        }
+                    } else {
+                        throw new QueryResponseError(responseCode);
+                    }
+                } catch (QueryError e) {
+                    error = e;
+                } catch (RuntimeException e) {
+                    exception = e;
+                }
+
+                // if anything goes wrong, make sure we report as an error
+                if (exception != null) {
+                    Log.log(Level.SEVERE, "response failed with runtime exception", exception);
+                    handler.handleError(new QuerySubmissionError(exception.getMessage()));
+                } else if (error != null) {
+                    Log.log(Level.SEVERE, "response failed with error", error);
+                    handler.handleError(error);
+                } else {
+                    handler.handleData(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.log(Level.SEVERE, "send request failed", e);
+                handler.handleError(new QuerySubmissionError(e.getMessage()));
+            }
+        });
+    }
+
+    private void sendRequestEsploraTransaction(Request request,
+                                                   DataTask dataTask,
+                                                   EsploraUTXOResponse utxo,
+                                                   CompletionHandler<Transaction, QueryError> handler) {
+        dataTask.execute(client, request, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Transaction data = null;
+                QueryError error = null;
+                RuntimeException exception = null;
+
+                try (ResponseBody responseBody = response.body()) {
+                    int responseCode = response.code();
+                    if (HttpStatusCodes.responseSuccess(request.method()).contains(responseCode)) {
+                        if (responseBody == null) {
+                            throw new QueryNoDataError();
+                        } else {
+                            String hex = responseBody.string();
+                            //data = new Transaction(utxo.txid, utxo.txid, utxo.txid, ,)
                         }
                     } else {
                         throw new QueryResponseError(responseCode);
@@ -475,6 +622,54 @@ public class BdbApiClient {
             }
         }
     }
+
+    private static class EsploraEmbeddedPagedArrayResponseHandler implements ResponseParser<PagedData<Transaction>> {
+
+        private final ObjectCoder coder;
+        private final OkHttpClient client;
+
+        EsploraEmbeddedPagedArrayResponseHandler(ObjectCoder coder, OkHttpClient client) {
+            this.coder = coder;
+            this.client = client;
+        }
+
+        @Override
+        public PagedData<Transaction> parseResponse(String responseData) throws QueryError {
+            try {
+                List<EsploraUTXOResponse> resp = coder.deserializeJsonList(EsploraUTXOResponse.class, responseData);
+
+                List<Transaction> data = new ArrayList<>();
+
+                for (EsploraUTXOResponse utxo : resp) {
+                    //we need the raw
+                    HttpUrl httpUrl = HttpUrl.parse("https://esplora.groestlcoin.org/api/tx/" + utxo.getTxid() + "/hex");
+                    Request.Builder requestBuilder = new Request.Builder();
+                    requestBuilder.url(httpUrl);
+                    requestBuilder.header("Accept", "text/plain");
+                    Response response = client.newCall(requestBuilder.build()).execute();
+
+                    String hex = response.body().string();
+
+                    Transaction tx = Transaction.create(utxo.getTxid(), utxo.getTxid(), utxo.getTxid(), "__bitcoin_mainnet",
+                            UnsignedLong.valueOf(227), Amount.create("0"), "null", null, null,
+                            null, UnsignedLong.valueOf(utxo.getVout()),
+                            utxo.getStatus().block_hash, UnsignedLong.valueOf(utxo.getStatus().block_height), null, null, hex, null);
+
+                    data.add(tx);
+                }
+
+                String prevUrl = null; //resp == null ? null : resp.getPreviousUrl().orNull();
+                String nextUrl = null; //resp == null ? null : resp.getNextUrl().orNull();
+                return new PagedData<>(data, prevUrl, nextUrl);
+            } catch (ObjectCoderException e) {
+                throw new QueryJsonParseError(e.getMessage());
+            } catch (Exception e) {
+                throw new QueryJsonParseError(e.getMessage());
+            }
+        }
+    }
+
+
 
     // JSON methods
 }
