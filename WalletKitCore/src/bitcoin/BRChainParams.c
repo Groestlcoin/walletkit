@@ -36,8 +36,7 @@ static const char *BRMainNetDNSSeeds[] = {
 static const char *BRTestNetDNSSeeds[] = {
     "testnet-seed1.groestlcoin.org",
     "testnet-seed2.groestlcoin.org",
-    "testnet1.groestlcoin.org",
-    "testnet2.groestlcoin.org",
+    //"192.168.1.120",
     NULL
 };
 
@@ -208,7 +207,7 @@ static const BRCheckPoint BRMainNetCheckpoints[] = {
 };
 
 static const BRCheckPoint BRTestNetCheckpoints[] = {
-    {       0, uint256("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"), 1296688602, 0x1d00ffff },
+    {     0, uint256("000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36"), 1440000002, 0x1d00ffffu },
     { 20160, uint256("0000009f3a953a21fafeee257be8486917fe06a82b374ffbdce7303438dfdf91"), 1486888783, 0x01000000u },
     { 40320, uint256("00000004aacfd123eab27e59955e26e3f203cef850824f34fe3cf62e280e5423"), 1488146381, 0x01000000u },
     { 60480, uint256("0000009a3e4e49879c00d0a6a092f6e524cc92df14bdc67c857243d0a4d6cab9"), 1489473858, 0x01000000u },
@@ -359,7 +358,7 @@ const BRChainParams *BRMainNetParams = &BRMainNetParamsRecord;
 
 static const BRChainParams BRTestNetParamsRecord = {
     BRTestNetDNSSeeds,
-    1441,                 // standardPort
+    17777,                 // standardPort
     0x0709110b,            // magicNumber
     SERVICES_NODE_WITNESS, // services
     BRTestNetVerifyDifficulty,
