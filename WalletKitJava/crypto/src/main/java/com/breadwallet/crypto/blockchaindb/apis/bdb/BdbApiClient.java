@@ -169,13 +169,21 @@ public class BdbApiClient {
     void sendGetForArrayWithPagingEsploraUnspent(String resource,
                                        Multimap<String, String> params,
                                        CompletionHandler<PagedData<Transaction>, QueryError> handler) {
+        boolean isTestNet = false;
+        if(params.containsKey("addresses")) {
+            if (!params.get("addresses").isEmpty()) {
+                String address = params.get("addresses").toArray(new String[0])[0];
+                if (address.startsWith("n") || address.startsWith("m"))
+                    isTestNet = true;
+            }
+        }
         makeAndSendRequestExploraAddressUTXO(
                 Collections.singletonList(resource),
                 params,
                 null,
                 "GET",
-                new EsploraEmbeddedPagedArrayResponseHandler(coder, client),
-                handler);
+                new EsploraEmbeddedPagedArrayResponseHandler(coder, client, isTestNet),
+                handler, isTestNet);
     }
 
     /* package */
@@ -338,11 +346,15 @@ public class BdbApiClient {
         sendRequest(requestBuilder.build(), dataTask, parser, handler);
     }
 
+    private static String testnetAddressUrl = "https://esplora-test.groestlcoin.org/api/address/";
+    private static String addressUrl = "https://esplora.groestlcoin.org/api/address/";
+
+
     private void makeAndSendRequestExploraAddressUTXO(List<String> pathSegments,
                                         Multimap<String, String> params,
                                         @Nullable Object json,
                                         String httpMethod, EsploraEmbeddedPagedArrayResponseHandler parser,
-                                        CompletionHandler<PagedData<Transaction>, QueryError> handler) {
+                                        CompletionHandler<PagedData<Transaction>, QueryError> handler, Boolean isTestnet) {
         RequestBody httpBody;
         if (json == null) {
             httpBody = null;
@@ -355,7 +367,7 @@ public class BdbApiClient {
             return;
         }
 
-        HttpUrl url = HttpUrl.parse("https://esplora.groestlcoin.org/api/address/" + params.get("address").toArray(new String[0])[0] + "/utxo");
+        HttpUrl url = HttpUrl.parse((isTestnet ? testnetAddressUrl : addressUrl) + params.get("address").toArray(new String[0])[0] + "/utxo");
         if (null == url) {
             handler.handleError(new QueryUrlError("Invalid base URL " + baseUrl));
             return;
@@ -627,10 +639,14 @@ public class BdbApiClient {
 
         private final ObjectCoder coder;
         private final OkHttpClient client;
+        private final Boolean isTestnet;
+        private static String testnetUrl = "https://esplora-test.groestlcoin.org/api/tx/";
+        private static String url = "https://esplora.groestlcoin.org/api/tx/";
 
-        EsploraEmbeddedPagedArrayResponseHandler(ObjectCoder coder, OkHttpClient client) {
+        EsploraEmbeddedPagedArrayResponseHandler(ObjectCoder coder, OkHttpClient client, Boolean isTestnet) {
             this.coder = coder;
             this.client = client;
+            this.isTestnet = isTestnet;
         }
 
         @Override
@@ -642,7 +658,7 @@ public class BdbApiClient {
 
                 for (EsploraUTXOResponse utxo : resp) {
                     //we need the raw
-                    HttpUrl httpUrl = HttpUrl.parse("https://esplora.groestlcoin.org/api/tx/" + utxo.getTxid() + "/hex");
+                    HttpUrl httpUrl = HttpUrl.parse((isTestnet ? testnetUrl : url) + utxo.getTxid() + "/hex");
                     Request.Builder requestBuilder = new Request.Builder();
                     requestBuilder.url(httpUrl);
                     requestBuilder.header("Accept", "text/plain");
