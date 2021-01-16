@@ -367,7 +367,7 @@ public class BdbApiClient {
             return;
         }
 
-        HttpUrl url = HttpUrl.parse((isTestnet ? testnetAddressUrl : addressUrl) + params.get("address").toArray(new String[0])[0] + "/utxo");
+        HttpUrl url = HttpUrl.parse((isTestnet ? testnetAddressUrl : addressUrl) + params.get("addresses").toArray(new String[0])[0] + "/utxo");
         if (null == url) {
             handler.handleError(new QueryUrlError("Invalid base URL " + baseUrl));
             return;

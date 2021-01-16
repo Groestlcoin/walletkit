@@ -70,7 +70,7 @@ public class TransactionApi {
             if (beginBlockNumber != null) paramsBuilder.put("start_height", beginBlockNumber.toString());
             if (endBlockNumber != null) paramsBuilder.put("end_height", endBlockNumber.toString());
             paramsBuilder.put("max_page_size", maxPageSize.toString());
-            for (String address : chunkedAddresses) paramsBuilder.put("address", address);
+            for (String address : chunkedAddresses) paramsBuilder.put("addresses", address);
             ImmutableMultimap<String, String> params = paramsBuilder.build();
 
             CompletionHandler<PagedData<Transaction>, QueryError> pagedHandler = createPagedResultsHandler(coordinator, chunkedAddresses);
